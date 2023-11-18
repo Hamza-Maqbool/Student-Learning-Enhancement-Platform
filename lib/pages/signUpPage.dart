@@ -6,43 +6,48 @@ import 'package:http/http.dart' as http;
 import 'package:studentlearningenhancement/config.dart';
 
 class SignUpPage extends StatelessWidget {
-   SignUpPage({super.key});
+  SignUpPage({Key? key});
 
-   final emailController=TextEditingController();
-   final passwordController=TextEditingController();
-    bool _isNotValidate = false;
-   Future<void>  SignUserUp ()
-   async {
-     try {
-       if (emailController.text.isNotEmpty &&
-           passwordController.text.isNotEmpty) {
-         var registrationBody = {
-           "email": emailController.text,
-           "password": passwordController.text
-         };
-         var response = await http.post(
-             Uri.parse('http://192.168.100.16:3007/registration'),
-             headers: {"Content-Type": "application/json"},
-             body: jsonEncode(registrationBody)
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool _isNotValidate = false;
 
-         );
-         print(response);
-       }
-       else {
-         _isNotValidate = true;
-       }
-     }
-     catch (e) {
-       print("Error during HTTP request: $e");
-     }
+  Future<http.Response?> SignUserUp() async {
+    try {
+      http.Response response = http.Response('', 500); // Initialize with default values
 
-   }
-   void NavigateToHomePage(BuildContext context) async {
-     Navigator.push(
-       context,
-       MaterialPageRoute(builder: (context) => HomePage()),
-     );
-   }
+      if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+        var registrationBody = {
+          "email": emailController.text,
+          "password": passwordController.text
+        };
+
+        response = await http.post(
+          Uri.parse('http://10.5.98.35:3006/registration'),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(registrationBody),
+        );
+
+        print('Response Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      } else {
+        _isNotValidate = true;
+      }
+
+      return response; // Return the response
+    } catch (e) {
+      print("Error during HTTP request: $e");
+      return null; // Return null in case of an error
+    }
+  }
+
+  void NavigateToHomePage(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +58,8 @@ class SignUpPage extends StatelessWidget {
             children: [
               const SizedBox(height: 50),
               Image.asset(
-                'assets/images/logo.png',                 width: 100, // Set the width
+                'assets/images/logo.png',
+                width: 100, // Set the width
                 height: 100, // Set the height
               ),
               const SizedBox(height: 50),
@@ -67,12 +73,12 @@ class SignUpPage extends StatelessWidget {
               ),
               const SizedBox(height: 25),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal:20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
                   controller: emailController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    enabledBorder:const  OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -88,13 +94,13 @@ class SignUpPage extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal:20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
                   controller: passwordController,
                   keyboardType: TextInputType.text,
                   obscureText: true,
                   decoration: InputDecoration(
-                    enabledBorder:const  OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -108,29 +114,28 @@ class SignUpPage extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // MyTextField(
-              //   controller: useranmeController,
-              //   hintText: 'Username',
-              //   obscureText: false,
-              //
-              // ),
-              // MyTextField(
-              //   controller: passwordController,
-              //   hintText: 'Password',
-              //   obscureText: true,
-              // ),
               const SizedBox(height: 10),
 
               MySignUpButton(
-                onTap:()=>{
-                  SignUserUp(),
-                  NavigateToHomePage(context) ,
+                onTap: () async {
+                  print('on tap is triggered');
+                  http.Response? response = await SignUserUp();
+                  if (response != null) {
+                    if (response.statusCode == 200) {
+                      NavigateToHomePage(context);
+                    } else {
+                      // Handle different status codes here
+                      print('Error: ${response.statusCode}');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Registration Failed: ${response.statusCode}'),
+                        ),
+                      );
+                    }
+                  }
                 },
-
               ),
               const SizedBox(height: 50),
-
             ],
           ),
         ),
@@ -138,4 +143,3 @@ class SignUpPage extends StatelessWidget {
     );
   }
 }
-

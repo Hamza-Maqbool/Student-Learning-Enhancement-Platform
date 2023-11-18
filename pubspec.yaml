@@ -30,8 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  velocity_x:
-  http:
+  velocity_x: ^4.1.1
+  http: ^0.13.3
+  file_picker: ^4.1.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,6 +65,9 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/home1.png
+    - assets/images/programming.png
+    - assets/images/communication.png
+    - assets/images/mathematics.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

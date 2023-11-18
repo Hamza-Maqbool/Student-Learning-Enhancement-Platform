@@ -1,3 +1,3 @@
 final url = 'http://localhost:3007';
 
-final registration= url + "/registration";
+final registration= url + "/users/registration";
