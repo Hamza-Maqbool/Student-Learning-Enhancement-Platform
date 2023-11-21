@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<String>> fetchCourseNames() async {
-    final response = await http.get(Uri.parse('http://10.5.98.20:3006/getCourseNames'));
+    final response = await http.get(Uri.parse('http://localhost:3006/getCourseNames'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);

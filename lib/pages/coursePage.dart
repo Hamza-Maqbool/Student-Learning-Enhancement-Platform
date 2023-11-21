@@ -19,9 +19,7 @@ class CourseDetailsPage extends StatefulWidget {
 class _CourseDetailsPageState extends State<CourseDetailsPage> {
   int numberOfPeople = 0;
   int numberOfLearningContent = 0;
-
-  // Dummy data for lessons, replace it with your actual data
-  List<String> lessons = ["Learning Content 1", "Learning Content 2", "Learning Content 3", "Learning Content 4"];
+  List<String> learningContentTitles = [];
 
   @override
   void initState() {
@@ -30,26 +28,51 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
   }
 
   Future<void> fetchData() async {
-    await fetchNumberOfPeople();
-    //await fetchNumberOfLearningContent();
+    await fetchNumberOfLearningContent();
+    await fetchLearningContentTitles();
   }
 
-  Future<void> fetchNumberOfPeople() async {
+  Future<void> fetchNumberOfLearningContent() async {
     try {
-      final Uri url = Uri.parse('http://localhost:3006/usersCount');
+      final Uri url = Uri.parse('http://localhost:3006/lessonsCount?courseName=${widget.courseName}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          numberOfPeople = data['count'];
+          numberOfLearningContent = data['count'];
         });
       } else {
-        throw Exception('Failed to load the number of people');
+        throw Exception('Failed to load the number of learning content');
       }
     } catch (error) {
-      print('Error fetching the number of people: $error');
+      print('Error fetching the number of learning content: $error');
     }
   }
+  Future<void> fetchLearningContentTitles() async {
+    try {
+      final Uri url = Uri.parse('http://localhost:3006/getLessons?courseName=${widget.courseName}');
+      final response = await http.get(url);
+
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data != null && data['titles'] != null) {
+          setState(() {
+            learningContentTitles = List<String>.from(data['titles']);
+          });
+        } else {
+          print('Data or titles is null');
+        }
+      } else {
+        throw Exception('Failed to load learning content titles');
+      }
+    } catch (error) {
+      print('Error fetching learning content titles: $error');
+    }
+  }
+
 
   void _showAddLessonDialog() {
     showDialog(
@@ -147,7 +170,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                     ),
                     Container(
                       width: constraints.maxWidth,
-                      height: constraints.maxHeight * 0.23,
+                      height: constraints.maxHeight * 0.3,
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: widget.boxxColor.withOpacity(0.5),
@@ -166,7 +189,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: constraints.maxWidth * 0.5),
+                              SizedBox(width: constraints.maxWidth * 0.4),
                               IconButton(
                                 icon: Icon(
                                   Icons.collections,
@@ -187,19 +210,11 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                               color: Colors.black,
                             ),
                           ),
-                          SizedBox(height: 80),
+                          SizedBox(height: 70),
                           Row(
                             children: [
                               Text(
-                                ' $numberOfPeople people learning',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(width: constraints.maxWidth * 0.1),
-                              Text(
-                                'learning content',
+                                ' $numberOfLearningContent learning contents',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -237,45 +252,48 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                             size: 25,
                           ),
                           onPressed: () {
-                            // Show the add lesson dialog for each lesson
                             _showAddLessonDialog();
                           },
                         ),
                       ],
                     ),
                     SizedBox(height: 8.0),
-
-                    // Horizontal list of lessons
                     Container(
                       height: constraints.maxHeight * 0.38,
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: lessons.length,
+                        itemCount: learningContentTitles.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 8),
-                            padding: EdgeInsets.all(8),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color: widget.boxxColor.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(5.0),
+                          return GestureDetector(
+                            onTap: () {
+                              // Handle the tap event for the item at index
+                              print('Tapped on item at index $index');
+                              // Add your logic to navigate or perform any action
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 8),
+                              padding: EdgeInsets.all(8),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: widget.boxxColor.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: constraints.maxWidth * 0.04),
-
-                                Text(
-                                  lessons[index],
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                  SizedBox(width: constraints.maxWidth * 0.04),
+                                  Text(
+                                    learningContentTitles[index],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },
