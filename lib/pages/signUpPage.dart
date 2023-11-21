@@ -23,7 +23,7 @@ class SignUpPage extends StatelessWidget {
         };
 
         response = await http.post(
-          Uri.parse('http://10.5.98.35:3006/registration'),
+          Uri.parse('http://10.5.98.12:3006/registration'),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(registrationBody),
         );

@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:studentlearningenhancement/pages/home.dart';
 import 'coursePage.dart';
+import 'package:http/http.dart' as http;
+
 
 class NewCoursePage extends StatefulWidget {
   const NewCoursePage({Key? key}) : super(key: key);
@@ -29,13 +33,39 @@ class _NewCoursePageState extends State<NewCoursePage> {
 
   bool isCreateCourseButtonPressed = false;
 
-  void createCourse() {
-    // Implement your logic for creating a course
+  void createCourse() async {
+    try {
+      // Validate fields and show error messages if necessary
+
+      // Make an HTTP POST request to your API
+      var response = await http.post(
+        Uri.parse('http://10.5.98.12:3006/addCourse'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'name': courseNameController.text,
+          'description': courseDescriptionController.text,
+          'code': courseCodeController.text,
+          'category': selectedCategory,
+        }),
+      );
+
+      // Check the response status and handle accordingly
+      if (response.statusCode == 200) {
+        // Successful response, handle as needed
+        print('Course created successfully');
+      } else {
+        // Handle error, show error message or log
+        print('Failed to create course: ${response.body}');
+      }
+    } catch (error) {
+      // Handle general error, show error message or log
+      print('Error creating course: $error');
+    }
   }
 
-  void showFeedbackPopup() {
-    // Implement your logic for showing feedback popup
-  }
+
 
   List<String> categories = [
     'Select Course Category',
@@ -139,7 +169,7 @@ class _NewCoursePageState extends State<NewCoursePage> {
                     SizedBox(width: 25),
                     IconButton(
                       onPressed: () {
-                        showFeedbackPopup();
+
                       },
                       icon: const Icon(
                         Icons.more_vert,

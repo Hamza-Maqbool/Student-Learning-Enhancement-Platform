@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:studentlearningenhancement/pages/uploadAssignment.dart';
 import 'package:studentlearningenhancement/pages/uploadContentPage.dart';
 
 class CourseDetailsPage extends StatefulWidget {
@@ -49,27 +50,25 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       print('Error fetching the number of people: $error');
     }
   }
+
   void _showAddLessonDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white, // Set the background color
+          backgroundColor: Colors.white,
           content: FractionallySizedBox(
-
-        // widthFactor: 1.0, // Make the width of the dialog fit the screen
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Set the main axis size to min
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Align(
-                  alignment: Alignment.centerLeft, // Set text alignment to left
+                  alignment: Alignment.centerLeft,
                   child: TextButton(
                     onPressed: () {
-                      // Add functionality to add the lesson
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UploadContent(),
+                          builder: (context) => UploadContent(courseName: widget.courseName),
                         ),
                       );
                     },
@@ -78,21 +77,25 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       style: TextStyle(
                         color: CupertinoColors.systemGrey,
                         fontWeight: FontWeight.bold,
-
                       ),
                     ),
                   ),
                 ),
                 Align(
-                  alignment: Alignment.centerLeft, // Set text alignment to left
+                  alignment: Alignment.centerLeft,
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UploadAssignment(),
+                        ),
+                      );
                     },
                     child: const Text(
                       "Upload Assignment",
                       style: TextStyle(
-                        color: CupertinoColors.systemGrey, // Set text color
+                        color: CupertinoColors.systemGrey,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -105,9 +108,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       },
     );
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +237,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                             size: 25,
                           ),
                           onPressed: () {
-                            // Show the add lesson dialog
+                            // Show the add lesson dialog for each lesson
                             _showAddLessonDialog();
                           },
                         ),

@@ -1,11 +1,39 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:studentlearningenhancement/pages/coursePage.dart';
-import 'package:studentlearningenhancement/pages/createCoursePage.dart';
+import 'package:http/http.dart' as http;
 
 import 'categoryPage.dart';
+import 'coursePage.dart';
+import 'createCoursePage.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<List<String>> courseNames;
+
+  @override
+  void initState() {
+    super.initState();
+    courseNames = fetchCourseNames();
+  }
+
+  Future<List<String>> fetchCourseNames() async {
+    final response = await http.get(Uri.parse('http://10.5.98.20:3006/getCourseNames'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> courseNamesList = data['courseNames'];
+      return courseNamesList.map((courseName) => courseName.toString()).toList();
+    } else {
+      throw Exception('Failed to load course names');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +73,7 @@ class HomePage extends StatelessWidget {
                     Align(
                       alignment: Alignment.topCenter,
                       child: Container(
-                        width: constraints.maxWidth*0.9,
+                        width: constraints.maxWidth * 0.9,
                         height: constraints.maxHeight * 0.3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
@@ -106,13 +134,16 @@ class HomePage extends StatelessWidget {
                       left: constraints.maxWidth * 0.08,
                       child: SizedBox(
                         width: constraints.maxWidth,
-                        height: constraints.maxHeight *0.3,
+                        height: constraints.maxHeight * 0.3,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
-                            CategoryBox('Programming', Color(0xff7F8D58), 'assets/images/programming.png'),
-                            CategoryBox('Mathematics', Color(0xff5a6ea0), 'assets/images/mathematics.png'),
-                            CategoryBox('Communication', Color(0xffb49295), 'assets/images/communication.png'),
+                            CategoryBox(
+                                'Programming', Color(0xff7F8D58), 'assets/images/programming.png'),
+                            CategoryBox(
+                                'Mathematics', Color(0xff5a6ea0), 'assets/images/mathematics.png'),
+                            CategoryBox(
+                                'Communication', Color(0xffb49295), 'assets/images/communication.png'),
                           ],
                         ),
                       ),
@@ -152,13 +183,29 @@ class HomePage extends StatelessWidget {
                       child: SizedBox(
                         width: constraints.maxWidth,
                         height: constraints.maxHeight * 0.32,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            CourseCard('Programming',  Color(0xff5a6ea0), 'assets/images/programming.png'),
-                            CourseCard('Mathematics', Color(0xff1E687F), 'assets/images/mathematics.png'),
-                            CourseCard('Communication', Color(0xff150B32), 'assets/images/communication.png'),
-                          ],
+                        child: FutureBuilder<List<String>>(
+                          future: courseNames,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              List<String> courseNames = (snapshot.data as List<dynamic>).cast<String>();
+
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: courseNames.length,
+                                itemBuilder: (context, index) {
+                                  return CourseCard(
+                                    courseNames[index],
+                                    Color(0xffb49295),
+                                    'assets/images/mathematics.png',
+                                  );
+                                },
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
@@ -190,7 +237,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Inside the CategoryBox class
 class CategoryBox extends StatelessWidget {
   final String categoryName;
   final Color boxColor;
@@ -202,7 +248,6 @@ class CategoryBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigate to a new page and pass the category name
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -261,7 +306,6 @@ class CategoryBox extends StatelessWidget {
   }
 }
 
-// Inside the CourseCard class
 class CourseCard extends StatelessWidget {
   final String courseName;
   final Color boxxColor;
@@ -273,21 +317,16 @@ class CourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigate to a new page and pass the course name
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CourseDetailsPage(
-                courseName,
-                boxxColor,
-               imageRoute
-            ),
+            builder: (context) => CourseDetailsPage(courseName, boxxColor, imageRoute),
           ),
         );
       },
       child: Container(
         height: 80,
-        width: 200,
+        width: 220,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: boxxColor,
@@ -335,4 +374,3 @@ class CourseCard extends StatelessWidget {
     );
   }
 }
-

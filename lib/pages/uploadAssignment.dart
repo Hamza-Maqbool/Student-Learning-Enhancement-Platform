@@ -1,120 +1,25 @@
-import 'dart:convert';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:studentlearningenhancement/pages/home.dart';
-import 'package:http/http.dart' as http;
 import 'coursePage.dart';
 
-class UploadContent extends StatefulWidget {
-  final String courseName;
-
-  const UploadContent({Key? key, required this.courseName}) : super(key: key);
+class UploadAssignment extends StatefulWidget {
+  const UploadAssignment({Key? key}) : super(key: key);
 
   @override
-  _UploadContentState createState() => _UploadContentState();
+  _UploadAssignmentState createState() => _UploadAssignmentState();
 }
 
-class _UploadContentState extends State<UploadContent> {
+class _UploadAssignmentState extends State<UploadAssignment> {
   TextEditingController contentNameController = TextEditingController();
-  PlatformFile? pickedFile;
 
   void showFeedbackPopup() {
     // Implement your logic for showing feedback popup
   }
-  Future<void> _uploadLesson() async {
-    try {
-      String lessonName = contentNameController.text;
 
-      if (lessonName.isEmpty) {
-        // Handle case where lesson name is empty
-        return;
-      }
-
-      // Create a FormData object to send data as multipart/form-data
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('http://10.5.98.20:3006/createLesson'),
-      );
-
-      // Add lesson name and course name as fields
-      request.fields['title'] = lessonName;
-      request.fields['courseName'] = widget.courseName;
-
-      // Add file if pickedFile is not null
-      if (pickedFile != null) {
-        // Use 'content' as the field name
-        request.files.add(http.MultipartFile.fromBytes(
-          'content',
-          pickedFile!.bytes!,
-          filename: pickedFile!.name,
-        ));
-      }
-
-      // Log details
-      print('Request Fields: ${request.fields}');
-      print('Request Files: ${request.files.map((file) => file.filename)}');
-
-      // Send the request
-      var response = await request.send();
-
-      // Handle the response
-      if (response.statusCode == 200) {
-        // Parse the response JSON if needed
-        var responseBody = await response.stream.bytesToString();
-        var jsonResponse = json.decode(responseBody);
-
-        // Handle successful response
-        print('Lesson created successfully!');
-        print('Response: $jsonResponse');
-      } else {
-        // Handle failed response
-        print('Failed to create lesson. Status code: ${response.statusCode}');
-        var responseBody = await response.stream.bytesToString();
-        print('Response: $responseBody');
-      }
-    } catch (e) {
-      // Handle errors
-      print('Error creating lesson: $e');
-    }
+  void handleAttachFileClick() {
+    // Implement your logic for when the "Attach File" row is clicked
   }
-
-  Future<void> _uploadFile(String filePath) async {
-    try {
-      var request = http.MultipartRequest('POST', Uri.parse('http://10.5.104.143:3006/uploadFile'));
-      request.files.add(await http.MultipartFile.fromPath('file', filePath));
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        print('File uploaded successfully!');
-      } else {
-        print('File upload failed with status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error uploading file: $e');
-    }
-
-  }
-
-  Future<void> _pickFile() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-      if (result != null) {
-        setState(() {
-          pickedFile = result.files.single;
-        });
-        print('Picked file name: ${pickedFile!.name}');
-      } else {
-        print('User canceled file picking');
-      }
-    } catch (e) {
-      print('Error picking file: $e');
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -127,6 +32,7 @@ class _UploadContentState extends State<UploadContent> {
               children: [
                 SizedBox(height: constraints.maxHeight * 0.04),
                 Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -144,13 +50,12 @@ class _UploadContentState extends State<UploadContent> {
                     SizedBox(width: constraints.maxWidth * 0.59),
                     ElevatedButton(
                       onPressed: () {
-                        _uploadLesson();
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => HomePage(),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.black,
@@ -197,7 +102,7 @@ class _UploadContentState extends State<UploadContent> {
                         controller: contentNameController,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          hintText: 'Title of Learning Content',
+                          hintText: 'Share with class',
                           hintStyle: TextStyle(color: CupertinoColors.systemGrey),
                           focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
@@ -209,7 +114,12 @@ class _UploadContentState extends State<UploadContent> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    _pickFile();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
                   },
                   child: Container(
                     width: constraints.maxWidth * 0.9,
@@ -222,7 +132,9 @@ class _UploadContentState extends State<UploadContent> {
                     child: Row(
                       children: [
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+
+                          },
                           icon: const Icon(
                             Icons.attach_file,
                             color: CupertinoColors.systemGrey,

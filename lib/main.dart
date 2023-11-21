@@ -3,6 +3,7 @@ import 'package:studentlearningenhancement/pages/home.dart';
 import 'package:studentlearningenhancement/pages/loginPage.dart';
 import 'package:studentlearningenhancement/pages/createCoursePage.dart';
 import 'package:studentlearningenhancement/pages/signUpPage.dart';
+import 'package:studentlearningenhancement/pages/uploadContentPage.dart';
 
 void main()
 {
