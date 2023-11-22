@@ -35,7 +35,7 @@ class _UploadContentState extends State<UploadContent> {
       // Create a FormData object to send data as multipart/form-data
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://10.5.98.20:3006/createLesson'),
+        Uri.parse('http://localhost:3006/createLesson'),
       );
 
       // Add lesson name and course name as fields
@@ -145,12 +145,13 @@ class _UploadContentState extends State<UploadContent> {
                     ElevatedButton(
                       onPressed: () {
                         _uploadLesson();
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => HomePage(),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CourseDetailsPage(widget.courseName, Color(0xff5a6ea0),
+                              'assets/images/mathematics.png',),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Colors.black,

@@ -141,9 +141,9 @@ class _HomePageState extends State<HomePage> {
                             CategoryBox(
                                 'Programming', Color(0xff7F8D58), 'assets/images/programming.png'),
                             CategoryBox(
-                                'Mathematics', Color(0xff5a6ea0), 'assets/images/mathematics.png'),
+                                'Mathematics',Color(0xffb49295) , 'assets/images/mathematics.png'),
                             CategoryBox(
-                                'Communication', Color(0xffb49295), 'assets/images/communication.png'),
+                                'Communication', Color(0xff5a6ea0), 'assets/images/communication.png'),
                           ],
                         ),
                       ),
@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index) {
                                   return CourseCard(
                                     courseNames[index],
-                                    Color(0xffb49295),
+                                    Color(0xff5a6ea0),
                                     'assets/images/mathematics.png',
                                   );
                                 },
