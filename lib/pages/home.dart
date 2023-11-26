@@ -250,7 +250,7 @@ class CategoryBox extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CategoryDetailsPage(categoryName),
+            builder: (context) => CategoryDetailsPage(categoryName,boxColor,imagePath),
           ),
         );
       },
