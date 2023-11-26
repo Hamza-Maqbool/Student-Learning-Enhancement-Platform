@@ -172,7 +172,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                     ),
                     Container(
                       width: constraints.maxWidth,
-                      height: constraints.maxHeight * 0.3,
+                      height: constraints.maxHeight * 0.33,
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: widget.boxxColor.withOpacity(0.5),
@@ -191,7 +191,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: constraints.maxWidth * 0.4),
+                              SizedBox(width: constraints.maxWidth * 0.3),
                               IconButton(
                                 icon: Icon(
                                   Icons.collections,

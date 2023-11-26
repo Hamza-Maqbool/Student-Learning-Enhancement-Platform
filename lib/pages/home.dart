@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'categoryPage.dart';
 import 'coursePage.dart';
 import 'createCoursePage.dart';
@@ -41,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          SizedBox(height: 50),
+         // SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

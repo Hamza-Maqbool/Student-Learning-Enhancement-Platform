@@ -23,13 +23,12 @@ class _NewCoursePageState extends State<NewCoursePage> {
   }
 
   bool areTextFieldsEmpty(
-      String courseName, String courseDescription, String courseCode) {
-    return courseName.isEmpty || courseDescription.isEmpty || courseCode.isEmpty;
+      String courseName, String courseDescription) {
+    return courseName.isEmpty || courseDescription.isEmpty ;
   }
 
   TextEditingController courseNameController = TextEditingController();
   TextEditingController courseDescriptionController = TextEditingController();
-  TextEditingController courseCodeController = TextEditingController();
 
   bool isCreateCourseButtonPressed = false;
 
@@ -39,14 +38,13 @@ class _NewCoursePageState extends State<NewCoursePage> {
 
       // Make an HTTP POST request to your API
       var response = await http.post(
-        Uri.parse('http://10.5.98.12:3006/addCourse'),
+        Uri.parse('http://localhost:3006/addCourse'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({
           'name': courseNameController.text,
           'description': courseDescriptionController.text,
-          'code': courseCodeController.text,
           'category': selectedCategory,
         }),
       );
@@ -124,8 +122,7 @@ class _NewCoursePageState extends State<NewCoursePage> {
                             );
                           } else if (areTextFieldsEmpty(
                               courseNameController.text,
-                              courseDescriptionController.text,
-                              courseCodeController.text)) {
+                              courseDescriptionController.text)) {
                             if (isCreateCourseButtonPressed) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -200,8 +197,7 @@ class _NewCoursePageState extends State<NewCoursePage> {
                     errorText: isCreateCourseButtonPressed &&
                         areTextFieldsEmpty(
                             courseNameController.text,
-                            courseDescriptionController.text,
-                            courseCodeController.text)
+                            courseDescriptionController.text)
                         ? 'Field cannot be empty'
                         : null,
                   ),
@@ -226,39 +222,13 @@ class _NewCoursePageState extends State<NewCoursePage> {
                     errorText: isCreateCourseButtonPressed &&
                         areTextFieldsEmpty(
                             courseNameController.text,
-                            courseDescriptionController.text,
-                            courseCodeController.text)
+                            courseDescriptionController.text)
                         ? 'Field cannot be empty'
                         : null,
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: courseCodeController,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Course Code',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    hintStyle: TextStyle(color: Colors.white),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                    ),
-                    filled: true,
-                    fillColor: Color(0xff235D60),
-                    errorText: isCreateCourseButtonPressed &&
-                        areTextFieldsEmpty(
-                            courseNameController.text,
-                            courseDescriptionController.text,
-                            courseCodeController.text)
-                        ? 'Field cannot be empty'
-                        : null,
-                  ),
-                ),
-              ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(

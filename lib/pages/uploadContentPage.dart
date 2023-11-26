@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -196,7 +195,7 @@ class _UploadContentState extends State<UploadContent> {
                       ),
                       child: TextField(
                         controller: contentNameController,
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
                           hintText: 'Title of Learning Content',
                           hintStyle: TextStyle(color: CupertinoColors.systemGrey),

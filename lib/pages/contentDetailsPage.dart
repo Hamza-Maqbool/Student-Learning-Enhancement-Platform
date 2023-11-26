@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:video_player/video_player.dart';
+//import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
+//import 'package:flutter_pptx/flutter_pptx.dart';
+//import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
+
+import 'package:path/path.dart';
 
 class ContentDetailsPage extends StatelessWidget {
   final String courseName;
@@ -6,185 +14,99 @@ class ContentDetailsPage extends StatelessWidget {
 
   ContentDetailsPage({required this.courseName, required this.contentTitle});
 
+  Future<String?> getFileUrl() async {
+    //print('here');
+    //print(contentTitle);
+    // try {
+     final response = await http.get(
+        Uri.parse('http://localhost:3006/getFileContentByContentTitle?contentTitle=$contentTitle'),
+      );
+     // print(response.body);
+      if (response.statusCode == 200) {
+        print('hello');
+
+        //print(response.body);
+        return response.body;
+      } else {
+        throw Exception('Failed to load file content. Server responded with status ${response.statusCode}');
+      // }
+    // } catch (error) {
+    //   throw Exception('Error: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white70,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return ListView(
-            children: [
-              Container(
-                color: Colors.transparent,
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    Expanded(child: Container()), // Expanded space to center the image
-                  ],
-                ),
-              ),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(8),
-                      child: Image.asset(
-                        widget.imageRoute,
-                        width: constraints.maxWidth * 0.37,
-                        height: constraints.maxHeight * 0.17,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Container(
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight * 0.3,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: widget.boxxColor.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(24.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                widget.courseName,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: constraints.maxWidth * 0.4),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.collections,
-                                  color: Colors.black,
-                                  size: 25,
-                                ),
-                                onPressed: () {
-                                  // Add save functionality
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'by teachername',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(height: 70),
-                          Row(
-                            children: [
-                              Text(
-                                ' $numberOfLearningContent learning contents',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: constraints.maxWidth,
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Lessons',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: constraints.maxWidth * 0.6),
-                        IconButton(
-                          icon: Icon(
-                            Icons.add,
-                            color: Colors.black,
-                            size: 25,
-                          ),
-                          onPressed: () {
-                            _showAddLessonDialog();
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.0),
-                    Container(
-                      height: constraints.maxHeight * 0.38,
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: learningContentTitles.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ContentDetailsPage(
-                                    courseName: widget.courseName,
-                                    contentTitle: learningContentTitles[index],
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 8),
-                              padding: EdgeInsets.all(8),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: widget.boxxColor.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                  ),
-                                  SizedBox(width: constraints.maxWidth * 0.04),
-                                  Text(
-                                    learningContentTitles[index],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          );
+      appBar: AppBar(
+        title: Text(contentTitle),
+      ),
+      body: FutureBuilder<String?>(
+        future: getFileUrl(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final fileUrl = snapshot.data!;
+            print(fileUrl);
+            if (fileUrl.endsWith('.mp4')) {
+              return VideoPlayerWidget(videoUrl: fileUrl);
+            } else if (fileUrl.endsWith('.pptx')) {
+              return PptxViewerWidget(pptxUrl: fileUrl);
+            } else {
+
+              return Center(child: Text('Unsupported file type: ${fileUrl.split('.').last}'));
+            }
+          } else {
+            return Center(child: Text('No data available'));
+          }
         },
+      ),
+    );
+  }
+}
+class VideoPlayerWidget extends StatelessWidget {
+  final String videoUrl;
+
+  VideoPlayerWidget({required this.videoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: VideoPlayer(_initializeVideoPlayer(videoUrl)),
+    );
+  }
+
+  VideoPlayerController _initializeVideoPlayer(String videoUrl) {
+    final headers = {'Cross-Origin': 'anonymous'};
+
+    return VideoPlayerController.network(videoUrl, httpHeaders: headers)
+      ..initialize().then((_) {
+        // Initialization successful
+      }).onError((error, stackTrace) {
+        print('Error initializing video player: $error');
+      });
+  }
+}
+
+
+class PptxViewerWidget extends StatelessWidget {
+  final String pptxUrl;
+
+  PptxViewerWidget({required this.pptxUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () async {
+          // Handle opening PPTX file, e.g., launching another screen or a third-party library
+          // You can use the pptxUrl to load the file.
+        },
+        child: Text('Open PPTX'),
       ),
     );
   }
