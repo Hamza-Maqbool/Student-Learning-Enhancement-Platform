@@ -69,6 +69,38 @@ class SignUpButton extends StatelessWidget {
     );
   }
 }
+class SignInButton extends StatelessWidget {
+  final VoidCallback onTap;
+  SignInButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.white, // Set the background color to white
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), // Add padding
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8), // Add rounded corners
+        ),
+        side: BorderSide(color: Colors.white, width: 2), // Add a border
+        elevation: 5, // Add elevation
+        shadowColor: Colors.grey, // Set shadow color
+        minimumSize: Size(150, 40), // Set a minimum button size
+        textStyle: TextStyle(fontSize: 16), // Set text style
+        // You can also add margin here if needed:
+        // margin: EdgeInsets.all(10),
+      ),
+      child: Text('Sign In',
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
 class MySignUpButton extends StatelessWidget {
   final VoidCallback onTap;
   const MySignUpButton({required this.onTap});

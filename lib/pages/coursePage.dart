@@ -21,7 +21,9 @@ class CourseDetailsPage extends StatefulWidget {
 class _CourseDetailsPageState extends State<CourseDetailsPage> {
   int numberOfPeople = 0;
   int numberOfLearningContent = 0;
-  List<String> learningContentTitles = [];
+  List<String> lessonTitles = [];
+  List<String> assignmentTitles = [];
+  bool showLessons = true;
 
   @override
   void initState() {
@@ -36,7 +38,8 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
 
   Future<void> fetchNumberOfLearningContent() async {
     try {
-      final Uri url = Uri.parse('http://localhost:3006/lessonsCount?courseName=${widget.courseName}');
+      final Uri url =
+      Uri.parse('http://localhost:3006/lessonsCount?courseName=${widget.courseName}');
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -50,23 +53,25 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       print('Error fetching the number of learning content: $error');
     }
   }
+
   Future<void> fetchLearningContentTitles() async {
     try {
-      final Uri url = Uri.parse('http://localhost:3006/getLessons?courseName=${widget.courseName}');
-      final response = await http.get(url);
+      final Uri lessonsUrl =
+      Uri.parse('http://localhost:3006/getLessons?courseName=${widget.courseName}');
+      final Uri assignmentsUrl =
+      Uri.parse('http://localhost:3006/getLessons?courseName=${widget.courseName}');
 
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      final lessonsResponse = await http.get(lessonsUrl);
+      final assignmentsResponse = await http.get(assignmentsUrl);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data != null && data['titles'] != null) {
-          setState(() {
-            learningContentTitles = List<String>.from(data['titles']);
-          });
-        } else {
-          print('Data or titles is null');
-        }
+      if (lessonsResponse.statusCode == 200 && assignmentsResponse.statusCode == 200) {
+        final lessonsData = json.decode(lessonsResponse.body);
+        final assignmentsData = json.decode(assignmentsResponse.body);
+
+        setState(() {
+          lessonTitles = List<String>.from(lessonsData['titles']);
+          assignmentTitles = List<String>.from(assignmentsData['titles']);
+        });
       } else {
         throw Exception('Failed to load learning content titles');
       }
@@ -74,7 +79,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       print('Error fetching learning content titles: $error');
     }
   }
-
 
   void _showAddLessonDialog() {
     showDialog(
@@ -191,10 +195,10 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: constraints.maxWidth * 0.3),
+                              SizedBox(width: constraints.maxWidth * 0.37),
                               IconButton(
                                 icon: Icon(
-                                  Icons.collections,
+                                  Icons.collections_bookmark_sharp,
                                   color: Colors.black,
                                   size: 25,
                                 ),
@@ -238,15 +242,39 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          'Lessons',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(width: constraints.maxWidth * 0.03),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showLessons = true;
+                            });
+                          },
+                          child: Text(
+                            'Lessons',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: showLessons ? CupertinoColors.systemGrey : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        SizedBox(width: constraints.maxWidth * 0.6),
+                        SizedBox(width: constraints.maxWidth * 0.2),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              showLessons = false;
+                            });
+                          },
+                          child: Text(
+                            'Assignments',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: !showLessons ? CupertinoColors.systemGrey : Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: constraints.maxWidth * 0.2),
                         IconButton(
                           icon: Icon(
                             Icons.add,
@@ -264,8 +292,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       height: constraints.maxHeight * 0.38,
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        itemCount: learningContentTitles.length,
+                        itemCount: showLessons ? lessonTitles.length : assignmentTitles.length,
                         itemBuilder: (context, index) {
+                          final title = showLessons ? lessonTitles[index] : assignmentTitles[index];
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -273,7 +302,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                 MaterialPageRoute(
                                   builder: (context) => ContentDetailsPage(
                                     courseName: widget.courseName,
-                                    contentTitle: learningContentTitles[index],
+                                    contentTitle: title,
                                   ),
                                 ),
                               );
@@ -293,7 +322,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                   ),
                                   SizedBox(width: constraints.maxWidth * 0.04),
                                   Text(
-                                    learningContentTitles[index],
+                                    title,
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

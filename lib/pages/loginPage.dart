@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:studentlearningenhancement/components/buttton.dart';
 import 'package:studentlearningenhancement/components/textField.dart';
+import 'package:studentlearningenhancement/pages/home.dart';
 import 'package:studentlearningenhancement/pages/signUpPage.dart';
 
 class LoginPage extends StatelessWidget {
@@ -18,11 +19,12 @@ class LoginPage extends StatelessWidget {
      else{
        _isNotValidate=true;
      }
+
    }
    void SignUserUp(BuildContext context) async {
      Navigator.push(
        context,
-       MaterialPageRoute(builder: (context) => SignUpPage()),
+       MaterialPageRoute(builder: (context) => HomePage()),
      );
    }
 

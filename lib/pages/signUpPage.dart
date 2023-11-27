@@ -5,6 +5,8 @@ import '../components/buttton.dart';
 import 'package:http/http.dart' as http;
 import 'package:studentlearningenhancement/config.dart';
 
+import 'loginPage.dart';
+
 class SignUpPage extends StatelessWidget {
   SignUpPage({Key? key});
 
@@ -40,6 +42,12 @@ class SignUpPage extends StatelessWidget {
       return null; // Return null in case of an error
     }
   }
+  void SignUserIn(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
+  }
 
   void NavigateToHomePage(BuildContext context) async {
     Navigator.push(
@@ -64,7 +72,7 @@ class SignUpPage extends StatelessWidget {
               ),
               const SizedBox(height: 50),
               Text(
-                'Welcome back!',
+                'Welcome!',
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -136,6 +144,18 @@ class SignUpPage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 50),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center, // Center the "Sign Up" button
+                children: [
+                  Text('Already have an account?'),
+                  SizedBox(width: 5),
+                  SignInButton(
+                    onTap: () => SignUserIn(context),
+                    //onTap: SignUserUp,
+                  ),
+                ],
+              ),
             ],
           ),
         ),

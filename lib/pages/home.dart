@@ -91,6 +91,20 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Positioned(
+                      bottom: constraints.maxHeight * 0.93,
+                      left: constraints.maxWidth * 0.08,
+
+                        child: const Text(
+                          'Start Learning',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+
+                    Positioned(
                       bottom: constraints.maxHeight * 0.71,
                       left: constraints.maxWidth * 0.08,
                       child: ElevatedButton(
@@ -106,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Start Learning',
                           style: TextStyle(
                             color: Colors.black,
@@ -117,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(height: constraints.maxHeight * 0.05),
                     Positioned(
-                      bottom: constraints.maxHeight * 0.66,
+                      bottom: constraints.maxHeight * 0.65,
                       left: constraints.maxWidth * 0.08,
                       child: Text(
                         'Categories',
