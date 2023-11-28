@@ -20,7 +20,42 @@ class _UploadContentState extends State<UploadContent> {
   PlatformFile? pickedFile;
 
   void showFeedbackPopup() {
-    // Implement your logic for showing feedback popup
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: FractionallySizedBox(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UploadContent(courseName: widget.courseName),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Upload Learning Content",
+                      style: TextStyle(
+                        color: CupertinoColors.systemGrey,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
   Future<void> _uploadLesson() async {
     try {

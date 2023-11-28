@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:studentlearningenhancement/pages/home.dart';
+import 'package:intl/intl.dart';
+
 import 'coursePage.dart';
 
 class UploadAssignment extends StatefulWidget {
@@ -12,6 +14,9 @@ class UploadAssignment extends StatefulWidget {
 
 class _UploadAssignmentState extends State<UploadAssignment> {
   TextEditingController contentNameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  DateTime? deadline;
+
 
   void showFeedbackPopup() {
     // Implement your logic for showing feedback popup
@@ -20,7 +25,20 @@ class _UploadAssignmentState extends State<UploadAssignment> {
   void handleAttachFileClick() {
     // Implement your logic for when the "Attach File" row is clicked
   }
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
 
+    if (picked != null && picked != deadline) {
+      setState(() {
+        deadline = picked;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +82,7 @@ class _UploadAssignmentState extends State<UploadAssignment> {
                         ),
                       ),
                       child: const Text(
-                        'Post',
+                        'Assign',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -101,10 +119,10 @@ class _UploadAssignmentState extends State<UploadAssignment> {
                       child: TextField(
                         controller: contentNameController,
                         style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Share with class',
+                        decoration: const InputDecoration(
+                          hintText: 'Assignment Title',
                           hintStyle: TextStyle(color: CupertinoColors.systemGrey),
-                          focusedBorder: const OutlineInputBorder(
+                          focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                           ),
                         ),
@@ -112,6 +130,72 @@ class _UploadAssignmentState extends State<UploadAssignment> {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.all(constraints.maxWidth * 0.03),
+                  child: GestureDetector(
+                    onTap: () {
+                      // Implement your logic for when the text field is clicked
+                    },
+                    child: Container(
+                      width: constraints.maxWidth * 0.9,
+                      height: constraints.maxHeight * 0.1,
+                      padding: EdgeInsets.all(constraints.maxWidth * 0.01),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: CupertinoColors.systemGrey),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: TextField(
+                        controller: descriptionController,
+                        style: TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          hintText: 'Assignment Description',
+                          hintStyle: TextStyle(color: CupertinoColors.systemGrey),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    await _selectDate(context);
+                  },
+                  child: Container(
+                    width: constraints.maxWidth * 0.9,
+                    height: constraints.maxHeight * 0.09,
+                    padding: EdgeInsets.all(constraints.maxWidth * 0.01),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: CupertinoColors.systemGrey),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.calendar_today,
+                            color: CupertinoColors.systemGrey,
+                            size: 30,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          deadline != null
+                              ? 'Deadline: ${DateFormat('yyyy-MM-dd HH:mm').format(deadline!)}'
+                              : 'Select Deadline',
+                          style: TextStyle(
+                            color: CupertinoColors.systemGrey,
+                            fontSize: 16,
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ),
+
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -142,7 +226,7 @@ class _UploadAssignmentState extends State<UploadAssignment> {
                           ),
                         ),
                         SizedBox(width: 8),
-                        Text(
+                        const Text(
                           'Attach File',
                           style: TextStyle(
                             color: CupertinoColors.systemGrey,
