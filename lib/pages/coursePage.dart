@@ -59,7 +59,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       final Uri lessonsUrl =
       Uri.parse('http://localhost:3006/getLessons?courseName=${widget.courseName}');
       final Uri assignmentsUrl =
-      Uri.parse('http://localhost:3006/getLessons?courseName=${widget.courseName}');
+      Uri.parse('http://localhost:3006/getAssignments?courseName=${widget.courseName}');
 
       final lessonsResponse = await http.get(lessonsUrl);
       final assignmentsResponse = await http.get(assignmentsUrl);
@@ -117,7 +117,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UploadAssignment(),
+                          builder: (context) => UploadAssignment(courseName: widget.courseName),
                         ),
                       );
                     },

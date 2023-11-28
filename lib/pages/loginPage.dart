@@ -1,34 +1,72 @@
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:studentlearningenhancement/components/buttton.dart';
 import 'package:studentlearningenhancement/components/textField.dart';
 import 'package:studentlearningenhancement/pages/home.dart';
 import 'package:studentlearningenhancement/pages/signUpPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatelessWidget {
-   LoginPage({Key? key});
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+   class _LoginPageState extends State<LoginPage>{
   //controller
   final emailController=TextEditingController();
   final passwordController=TextEditingController();
    bool _isNotValidate = false;
-  //sign in user
-   void SignUserIn()
+   late SharedPreferences prefs;
+   @override
+   void initState()
    {
-     if (emailController.text.isNotEmpty&&passwordController.text.isNotEmpty)
-     {}
-     else{
-       _isNotValidate=true;
-     }
-
+     super.initState();
+     initSharedPref();
    }
-   void SignUserUp(BuildContext context) async {
+  void initSharedPref() async{
+    prefs = await SharedPreferences.getInstance();
+  }
+  //sign in user
+  void SignUserIn () async {
+    if(emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      var reqBody = {
+        "email": emailController.text,
+        "password": passwordController.text
+      };
+
+      var response = await http.post(
+        Uri.parse('http://localhost:3006/login'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody),
+      );
+
+      var jsonResponse = jsonDecode(response.body);
+      var status = jsonResponse['status'] ?? false;
+
+      if (status) {
+        // Successful login
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+      } else {
+        // Handle login failure
+        print('Login failed');
+      }
+    }
+  }
+
+  void SignUserUp(BuildContext context) async {
+     Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => SignUpPage()),
+     );
+   }
+   void NavigateToHomePage(BuildContext context) async {
      Navigator.push(
        context,
        MaterialPageRoute(builder: (context) => HomePage()),
      );
    }
 
-// ... (rest of the code)
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +164,11 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 10),
 
               MyButton(
-                onTap: SignUserIn,
+                onTap: ()  {
+                  print('on tap is triggered');
+                  SignUserIn();
+
+                },
               ),
               const SizedBox(height: 50),
               Row(
@@ -147,3 +189,4 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+

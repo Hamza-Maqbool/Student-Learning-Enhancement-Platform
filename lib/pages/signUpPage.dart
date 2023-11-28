@@ -25,7 +25,7 @@ class SignUpPage extends StatelessWidget {
         };
 
         response = await http.post(
-          Uri.parse('http://10.5.98.12:3006/registration'),
+          Uri.parse('http://localhost:3006/registration'),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(registrationBody),
         );
@@ -45,7 +45,7 @@ class SignUpPage extends StatelessWidget {
   void SignUserIn(BuildContext context) async {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => SignUpPage()),
     );
   }
 
@@ -141,6 +141,7 @@ class SignUpPage extends StatelessWidget {
                       );
                     }
                   }
+                  NavigateToHomePage(context);
                 },
               ),
               const SizedBox(height: 50),

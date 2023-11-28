@@ -78,13 +78,14 @@ class _UploadContentState extends State<UploadContent> {
 
       // Add file if pickedFile is not null
       if (pickedFile != null) {
-        // Use 'content' as the field name
+        // Use 'file' as the field name
         request.files.add(http.MultipartFile.fromBytes(
-          'content',
+          'file',  // <-- Ensure that this field name matches the one expected by the server
           pickedFile!.bytes!,
           filename: pickedFile!.name,
         ));
       }
+
 
       // Log details
       print('Request Fields: ${request.fields}');
